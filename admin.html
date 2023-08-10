@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #nav {
+        display: flex;
+        justify-content: space-around;
+        background-color: aqua;
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <nav id="nav">
+      <a href="./index.html">Login</a>
+      <p id="admin">Admin</p>
+      <p id="event">Event</p>
+      <!-- <a id="admin" href="./admin.html">Admin</a>
+        <a id="event" href="./event.html">Event</a> -->
+    </nav>
+
+    <!-- post -->
+    <form id="signup">
+      <input type="text" placeholder="imageUrl" id="poster" />
+      <br />
+      <input type="text" placeholder="name" id="name" />
+      <br />
+      <input type="text" placeholder="description" id="description" />
+      <br />
+      <input type="date" placeholder="date" id="date" />
+      <br />
+      <input type="text" placeholder="location" id="location" />
+      <br />
+      <select id="category">
+        <option value="Music">Music</option>
+        <option value="Sports">Sports</option>
+        <option value="Workshop">Workshop</option>
+      </select>
+      <br />
+      <input type="text" placeholder="price" id="price" />
+      <br />
+      <button type="submit">Submit</button>
+    </form>
+
+    <!-- table -->
+
+    <table cellspeacing="50px">
+      <thead>
+        <tr>
+          <th>Name of the Event</th>
+          <th>Date</th>
+          <th>Location</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Edit Button</th>
+          <th>Delete Button</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <!-- edit -->
+
+    <form id="edit">
+      <input type="text" placeholder="imageUrl" id="edposter" />
+      <br />
+      <input type="text" placeholder="name" id="edname" />
+      <br />
+      <input type="text" placeholder="description" id="eddescription" />
+      <br />
+      <input type="date" placeholder="date" id="eddate" />
+      <br />
+      <input type="text" placeholder="location" id="edlocation" />
+      <br />
+      <select id="edcategory">
+        <option value="Music">Music</option>
+        <option value="Sports">Sports</option>
+        <option value="Workshop">Workshop</option>
+      </select>
+      <br />
+      <input type="text" placeholder="price" id="edprice" />
+      <br />
+      <button type="submit">Edit</button>
+    </form>
+  </body>
+</html>
+
+<script>
+  const signup = document.getElementById("signup");
+  let adminLogin = document.getElementById("admin");
+  let token = JSON.parse(localStorage.getItem("token")) || "";
+
+  adminLogin.addEventListener("click", () => {
+    if (token) {
+      location.href = "./admin.html";
+    } else {
+      alert("Please Login First!");
+      location.href = "./index.html";
+    }
+  });
+
+  //post
+
+  signup.addEventListener("submit", (e) => {
+    e.preventDefault();
+    let obj = {
+      poster: signup.poster.value,
+      name: signup.name.value,
+      description: signup.description.value,
+      date: signup.date.value,
+      location: signup.location.value,
+      category: signup.category.value,
+      price: signup.price.value,
+    };
+    fetch(`https://clever-cod-swimsuit.cyclic.app/events`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(obj),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        
+         
+      })
+      .catch((err)=>{
+        alert("Event Created!!");
+       getData()
+      })
+     
+  });
+
+  const tbody = document.getElementById("tbody");
+
+  window.addEventListener("load", () => {
+    getData();
+  });
+
+  function getData() {
+    fetch(`https://clever-cod-swimsuit.cyclic.app/events`)
+      .then((res) => res.json())
+      .then((res) => {
+        console.log(res);
+        displaydata(res);
+      });
+  }
+
+
+  const edit = document.getElementById('edit')
+
+  function editdata(id){
+    edit.addEventListener('submit', (e)=>{
+    e.preventDefault()
+
+    let obj = {
+      poster: edit.edposter.value,
+      name: edit.edname.value,
+      description: edit.eddescription.value,
+      date: edit.eddate.value,
+      location: edit.edlocation.value,
+      category: edit.edcategory.value,
+      price: edit.edprice.value,
+    };
+
+    fetch(`https://clever-cod-swimsuit.cyclic.app/events/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(obj),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+      
+      })
+      .catch(()=>{
+        alert("Event Edited!!");
+         getData();
+      })
+
+    })
+  }
+  function displaydata(data) {
+
+tbody.innerText=null
+    data.forEach((item) => {
+      let tr = document.createElement("tr");
+      let td1 = document.createElement("td");
+      td1.innerText = item.name;
+      let td2 = document.createElement("td");
+      td2.innerText = item.date;
+
+      let td3 = document.createElement("td");
+      td3.innerText = item.location;
+
+      let td4 = document.createElement("td");
+      td4.innerText = item.category;
+
+      let td5 = document.createElement("td");
+      td5.innerText = item.price;
+
+      let td6 = document.createElement("button");
+      td6.innerText = "EDIT";
+
+      td6.addEventListener("click", () => {
+        editdata(item.id);
+        edit.edposter.value = item.poster;
+        edit.edname.value = item.name;
+        edit.eddescription.value = item.description;
+        edit.eddate.value = item.date;
+        edit.edlocation.value = item.location;
+        edit.edcategory.value = item.category;
+        edit.edprice.value = item.price;
+      });
+
+      let td7 = document.createElement("button");
+      td7.innerText = "DELETE";
+
+      td7.addEventListener("click", () => {
+        fetch(`https://clever-cod-swimsuit.cyclic.app/events/${item.id}`, {
+          method: "DELETE",
+        })
+          .then((res) => res.json())
+          .catch((err)=>{
+            alert(`Deleted Successfully`);
+            getData()
+        
+      })
+      });
+
+      tr.append(td1, td2, td3, td4, td5, td6, td7);
+
+      tbody.append(tr);
+    });
+  }
+</script>

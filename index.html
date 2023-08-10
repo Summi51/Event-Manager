@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #nav{
+        display: flex;
+        justify-content: space-around;
+        background-color: aqua;
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+
+    <nav id="nav">
+      <a href="./index.html">Login</a>
+      <p id="admin">Admin</p>
+      <a id="event" href="./event.html">Event</a>
+    </nav>
+
+    <h1>Login Page</h1>
+    <form id="form">
+      <input type="text" placeholder="Email" id="email" />
+      <input
+        type="text"
+        placeholder="Password"
+        id="password"
+        value="cityslicka"
+      />
+      <button>Submit</button>
+    </form>
+    
+  </body>
+</html>
+
+<script>
+  let adminLogin = document.getElementById("admin");
+  let token = JSON.parse(localStorage.getItem("token")) || "";
+  let form = document.querySelector("form");
+
+  adminLogin.addEventListener("click", () => {
+    if (token) {
+      location.href = "./admin.html";
+    } else {
+      alert("Please Login First!");
+      location.href = "./index.html";
+    }
+  });
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    let obj = {
+      email: form.email.value,
+      password: form.password.value,
+    };
+
+    fetch(`https://reqres.in/api/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(obj),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        localStorage.setItem("token", JSON.stringify(res.token));
+        if (res.token) {
+          alert("Login Successfull!!");
+          location.href = "./admin.html";
+        } else {
+          alert("Somthing went wrong!!");
+        }
+      });
+  });
+</script>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #nav {
+        display: flex;
+        justify-content: space-around;
+        background-color: aqua;
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <nav id="nav">
+      <a href="./index.html">Login</a>
+      <p id="admin">Admin</p>
+
+      <a id="event" href="./event.html">Event</a>
+    </nav>
+
+    
+    <div id="body"></div>
+
+
+  </body>
+</html>
+
+<script>
+  let adminLogin = document.getElementById("admin");
+  let token = JSON.parse(localStorage.getItem("token")) || "";
+
+  adminLogin.addEventListener("click", () => {
+    if (token) {
+      location.href = "./admin.html";
+    } else {
+      alert("Please Login First!");
+      location.href = "./index.html";
+    }
+  });
+
+  const body = document.getElementById("body");
+
+  window.addEventListener("load", () => {
+    getData();
+  });
+
+  function getData() {
+    fetch(`https://clever-cod-swimsuit.cyclic.app/events`)
+      .then((res) => res.json())
+      .then((res) => {
+        console.log(res);
+        displaydata(res);
+      });
+  }
+  function displaydata(data) {
+    body.innerHTML = null;
+    data.forEach((item) => {
+      let tr = document.createElement("div");
+      let td6 = document.createElement("img")
+      td6.setAttribute("src", item.poster)
+      td6.style.width="300px"
+      let td1 = document.createElement("h1");
+      td1.innerText = item.name;
+      let td2 = document.createElement("p");
+      td2.innerText = item.date;
+
+      let td3 = document.createElement("p");
+      td3.innerText = item.location;
+
+      let td4 = document.createElement("p");
+      td4.innerText = item.category;
+
+      let td5 = document.createElement("p");
+      td5.innerText = item.price;
+
+      tr.append(td1, td6, td2, td3, td4, td5);
+
+      body.append(tr);
+    });
+  }
+</script>
