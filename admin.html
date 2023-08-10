@@ -17,9 +17,8 @@
     <nav id="nav">
       <a href="./index.html">Login</a>
       <p id="admin">Admin</p>
-      <p id="event">Event</p>
-      <!-- <a id="admin" href="./admin.html">Admin</a>
-        <a id="event" href="./event.html">Event</a> -->
+
+      <a id="event" href="./event.html">Event</a>
     </nav>
 
     <!-- post -->
@@ -122,15 +121,11 @@
       body: JSON.stringify(obj),
     })
       .then((res) => res.json())
-      .then((res) => {
-        
-         
-      })
-      .catch((err)=>{
+      .then((res) => {})
+      .catch((err) => {
         alert("Event Created!!");
-       getData()
-      })
-     
+        getData();
+      });
   });
 
   const tbody = document.getElementById("tbody");
@@ -148,44 +143,39 @@
       });
   }
 
+  const edit = document.getElementById("edit");
 
-  const edit = document.getElementById('edit')
+  function editdata(id) {
+    edit.addEventListener("submit", (e) => {
+      e.preventDefault();
 
-  function editdata(id){
-    edit.addEventListener('submit', (e)=>{
-    e.preventDefault()
+      let obj = {
+        poster: edit.edposter.value,
+        name: edit.edname.value,
+        description: edit.eddescription.value,
+        date: edit.eddate.value,
+        location: edit.edlocation.value,
+        category: edit.edcategory.value,
+        price: edit.edprice.value,
+      };
 
-    let obj = {
-      poster: edit.edposter.value,
-      name: edit.edname.value,
-      description: edit.eddescription.value,
-      date: edit.eddate.value,
-      location: edit.edlocation.value,
-      category: edit.edcategory.value,
-      price: edit.edprice.value,
-    };
-
-    fetch(`https://clever-cod-swimsuit.cyclic.app/events/${id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(obj),
-    })
-      .then((res) => res.json())
-      .then((res) => {
-      
+      fetch(`https://clever-cod-swimsuit.cyclic.app/events/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(obj),
       })
-      .catch(()=>{
-        alert("Event Edited!!");
-         getData();
-      })
-
-    })
+        .then((res) => res.json())
+        .then((res) => {})
+        .catch(() => {
+          alert("Event Edited!!");
+          getData();
+        });
+    });
   }
   function displaydata(data) {
-
-tbody.innerText=null
+    tbody.innerText = null;
     data.forEach((item) => {
       let tr = document.createElement("tr");
       let td1 = document.createElement("td");
@@ -224,11 +214,10 @@ tbody.innerText=null
           method: "DELETE",
         })
           .then((res) => res.json())
-          .catch((err)=>{
+          .catch((err) => {
             alert(`Deleted Successfully`);
-            getData()
-        
-      })
+            getData();
+          });
       });
 
       tr.append(td1, td2, td3, td4, td5, td6, td7);
